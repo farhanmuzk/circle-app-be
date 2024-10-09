@@ -11,4 +11,5 @@ const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-export { server };
+// Ekspor server
+export default server; // Mengubah ekspor menjadi default
