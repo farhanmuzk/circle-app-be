@@ -1,30 +1,69 @@
-import { Request, Response } from "express";
 import prisma from "../config/prisma";
+import { v2 as cloudinary } from "cloudinary"; // Import Cloudinary
+import { Request, Response } from "express";
+// Make sure to import these
 
-// Create Post
+// Cloudinary configuration
+cloudinary.config({
+    cloud_name: "dvypl4sch", // Replace this with your Cloudinary cloud name
+    api_key: "754623645455713",       // Replace this with your Cloudinary API key
+    api_secret: "GIRzDMbW4UKdZbUICHDLgO9gyv0", // Replace this with your Cloudinary API secret
+    secure: true,
+  });
+
+
+// Your existing createPost function
 export const createPost = async (req: Request, res: Response) => {
-  const userId = (req as any).user?.id; 
-  if (!userId) {
-    return res.status(401).json({ error: "Unauthorized. User ID is missing." });
-  }
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized. User ID is missing." });
+    }
 
-  const { text } = req.body;
-  const imageUrl = req.file ? req.file.path : null;
+    const { text } = req.body;
+    const imageFile = req.file; // Dapatkan file gambar yang diunggah
 
-  try {
-    const post = await prisma.post.create({
-      data: {
-        text,
-        image: imageUrl,
-        authorId: userId,
-      },
-    });
-    res.status(201).json(post);
-  } catch (error) {
-    console.error("Error creating post:", error);
-    res.status(500).json({ error: "Failed to create post" });
-  }
-};
+    try {
+      let imageUrl = null;
+      if (imageFile) {
+        // Unggah gambar ke Cloudinary ke dalam folder "uploads/threads"
+        const result = await new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            {
+              resource_type: "image",  // Pastikan ini adalah gambar
+              folder: "uploads/threads", // Tentukan folder "uploads/threads"
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          );
+          uploadStream.end(imageFile.buffer); // Kirim file buffer ke Cloudinary
+        });
+        imageUrl = (result as any).secure_url; // Dapatkan URL aman dari Cloudinary
+      }
+
+
+      // Simpan data post ke database beserta URL gambar dari Cloudinary
+      const post = await prisma.post.create({
+        data: {
+          text,
+          image: imageUrl, // Gunakan URL gambar dari Cloudinary
+          authorId: userId,
+        },
+      });
+
+      res.status(201).json(post);
+    } catch (error) {
+        if (error instanceof Error) {
+          console.error("Error creating post:", error);
+          res.status(500).json({ error: error.message || "Failed to create post" });
+        } else {
+          console.error("Unknown error:", error);
+          res.status(500).json({ error: "An unknown error occurred" });
+        }
+      }
+  };
+
 
 // Get All Posts
 export const getAllPosts = async (req: Request, res: Response) => {
@@ -126,13 +165,11 @@ export const likePost = async (req: Request, res: Response) => {
     res.status(201).json(newLike);
   } catch (error) {
     console.error("Error liking post:", error);
-    res
-      .status(500)
-      .json({
-        error: "Error liking post",
-        details:
-          error instanceof Error ? error.message : "An unknown error occurred",
-      });
+    res.status(500).json({
+      error: "Error liking post",
+      details:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    });
   }
 };
 
@@ -162,13 +199,11 @@ export const unlikePost = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Post unliked" });
   } catch (error) {
     console.error("Error unliking post:", error);
-    res
-      .status(500)
-      .json({
-        error: "Error unliking post",
-        details:
-          error instanceof Error ? error.message : "An unknown error occurred",
-      });
+    res.status(500).json({
+      error: "Error unliking post",
+      details:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    });
   }
 };
 

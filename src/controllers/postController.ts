@@ -1,8 +1,8 @@
 // src/controllers/postController.ts
 import { Request, Response } from "express";
 import * as postService from "../services/postService";
-import { PostDto } from "../types/dtos/post.dto";
-import { CommentDto } from "../types/dtos/comment.dto";
+import { PostDto } from "../types/dto/post.dto";
+import { CommentDto } from "../types/dto/comment.dto";
 import prisma from "@/config/prisma";
 
 // Create Post

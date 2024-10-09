@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { registerUser, loginUser, forgotPassword as forgotPasswordService, resetPassword as resetPasswordService} from "../services/authService";
-import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto } from "../types/dtos/auth.dto";
+import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto } from "../types/dto/auth.dto";
 
 // REGISTER
 export const register = async (req: Request, res: Response) => {

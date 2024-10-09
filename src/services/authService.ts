@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import { jwtSecret } from "../utils/jwtUtils";
-import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto } from "../types/dtos/auth.dto";
+import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto } from "../types/dto/auth.dto";
 import { sendResetPasswordEmail } from "../utils/emailUtils";
 
 const prisma = new PrismaClient();

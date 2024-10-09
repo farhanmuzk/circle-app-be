@@ -1,7 +1,7 @@
 import express from "express";
 import { asyncWrapper } from "../middleware/asyncWrapper";
 import { authenticateJWT } from "../middleware/auth";
-import { getUserById, getAllUsers, getCurrentUser, updateUserProfile,  } from "../controllers/userController";
+import { getUserById, getAllUsers, getCurrentUser, updateUserProfile } from "../controllers/userController";
 import { upload } from "../middleware/multerMiddleware";
 
 const router = express.Router();

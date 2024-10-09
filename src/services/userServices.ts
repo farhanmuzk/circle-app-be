@@ -1,6 +1,6 @@
 // src/services/userService.ts
 import prisma from "../config/prisma";
-import { UserDto, UserProfileDto, UpdateUserDto } from "../types/dtos/user.dto";
+import { UserDto, UserProfileDto, UpdateUserDto } from "../types/dto/user.dto";
 import jwt from "jsonwebtoken";
 
 const jwtSecret = process.env.JWT_SECRET || "your_jwt_secret";

@@ -1,7 +1,7 @@
 // src/services/followService.ts
 
 import { PrismaClient } from "@prisma/client";
-import { FollowDto } from "../types/dtos/follow.dto";
+import { FollowDto } from "../types/dto/follow.dto";
 import { verifyToken } from "../utils/jwtUtils";
 const prisma = new PrismaClient();
 

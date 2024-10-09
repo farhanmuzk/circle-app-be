@@ -9,7 +9,7 @@ import {
   likePost,
   unlikePost,
 } from "../controllers/threadsController";
-import { upload } from "../middleware/multerMiddleware";
+import {upload} from "../middleware/multerMiddleware"; // Ensure this is your multer config
 
 const router = express.Router();
 
@@ -17,7 +17,7 @@ const router = express.Router();
 router
   .route("/")
   .post(asyncWrapper(authenticateJWT), upload.single("image"), createPost)
-  .get(getAllPosts); 
+  .get(getAllPosts);
 
 router.route("/:postId").get(getPostById);
 

@@ -1,7 +1,7 @@
 // src/services/postService.ts
 import prisma from "../config/prisma";
-import { PostDto } from "../types/dtos/post.dto";
-import { CommentDto } from "../types/dtos/comment.dto";
+import { PostDto } from "../types/dto/post.dto";
+import { CommentDto } from "../types/dto/comment.dto";
 
 // Create Post
 export const createPost = async (data: PostDto) => {
