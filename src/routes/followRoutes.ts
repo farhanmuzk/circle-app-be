@@ -1,7 +1,7 @@
 // src/routes/followRoutes.ts
 
 import express from 'express';
-import { authenticateJWT } from '../middleware/auth';
+import { authenticateJWT } from '../middleware/authenticateJWT';
 import { asyncWrapper } from '../middleware/asyncWrapper';
 import { followUser, getFollowersForUser, getFollowingUsers, unfollowUser } from '../controllers/followController';
 

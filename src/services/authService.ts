@@ -2,15 +2,21 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import { jwtSecret } from "../utils/jwtUtils";
-import { RegisterDto, LoginDto, ForgotPasswordDto, ResetPasswordDto } from "../types/dto/auth.dto";
+import {
+  RegisterDto,
+  LoginDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
+} from "../types/dto/auth.dto";
 import { sendResetPasswordEmail } from "../utils/emailUtils";
 
 const prisma = new PrismaClient();
-const DEFAULT_AVATAR_URL = "https://t4.ftcdn.net/jpg/00/64/67/27/360_F_64672736_U5kpdGs9keUll8CRQ3p3YaEv2M6qkVY5.jpg";
+const DEFAULT_AVATAR_URL =
+  "https://t4.ftcdn.net/jpg/00/64/67/27/360_F_64672736_U5kpdGs9keUll8CRQ3p3YaEv2M6qkVY5.jpg";
 
 // Function to hash password
 const hashPassword = async (password: string): Promise<string> => {
-  return bcrypt.hash(password, 10);
+  return bcrypt.hash(password, 8);
 };
 
 // Function to generate JWT token
@@ -53,7 +59,10 @@ export const registerUser = async (data: RegisterDto) => {
 export const loginUser = async (data: LoginDto) => {
   const { email, password } = data;
 
-  const user = await prisma.user.findUnique({ where: { email }, select: { id: true, password: true } });
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { id: true, password: true },
+  });
   if (!user) {
     throw new Error("User not found");
   }
@@ -67,16 +76,21 @@ export const loginUser = async (data: LoginDto) => {
 };
 
 export const forgotPassword = async (data: ForgotPasswordDto) => {
-  const { email } = data;
+    const { email } = data;
 
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) {
-    throw new Error("User not found");
-  }
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new Error("User not found");
+    }
 
-  const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: "15m" });
-  await sendResetPasswordEmail(email, token);
-};
+    const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: "15m" });
+
+    // Kirim email secara async, tanpa menunggu
+    sendResetPasswordEmail(email, token).catch((err) => {
+      console.error('Failed to send reset password email:', err);
+    });
+  };
+
 
 export const resetPassword = async (data: ResetPasswordDto) => {
   const { token, newPassword } = data;
